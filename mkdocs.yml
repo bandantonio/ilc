@@ -17,7 +17,7 @@ repo_url: https://github.com/namecheap/ilc
 repo_name: namecheap/ilc
 
 nav:
-  - Home: index.md
+  - Home: {{ repo.full_url }}/README.md
   - Installation: installation_guide.md
   - Micro-frontend Types: microfrontend-types.md
   - App deployments with ILC: stepbystep/index.md
