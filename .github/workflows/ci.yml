@@ -153,7 +153,7 @@ jobs:
       - name: Install packages required for documentation
         run: |
           pip3 install mkdocs-material
-          pip3 install mkdocs-markdownextradata-plugin
+          pip3 install mkdocs-macros-plugin
               
       - name: Generate docs and publish to GitHub Pages
         run: mkdocs gh-deploy --force
