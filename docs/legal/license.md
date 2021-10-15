@@ -1,0 +1,1 @@
+--8<-- "{{ repo.full_url }}/LICENSE.txt"
