@@ -152,9 +152,8 @@ jobs:
 
       - name: Install packages required for documentation
         run: |
-          sudo apt-get update && sudo apt-get install -y python3-pip
-          pip3 --version
           pip3 install mkdocs-material
+          pip3 install mkdocs-markdownextradata-plugin
               
       - name: Generate docs and publish to GitHub Pages
         run: mkdocs gh-deploy --force

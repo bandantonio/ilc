@@ -10,7 +10,7 @@ In order to upgrade ILC to higher version you only need to replace running Docke
 in the following order: Registry first, ILC itself after. 
 So you should never have newer version of ILC running alongside outdated Registry. 
 
-To get more information about exact configuration of the Docker images see [docker-compose.yml](https://github.com/namecheap/ilc/blob/master/docker-compose.yml).
+To get more information about exact configuration of the Docker images see [docker-compose.yml]({{ repo.full_url }}/docker-compose.yml).
 
 ## Environment variables
 
