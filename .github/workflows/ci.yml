@@ -149,6 +149,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install packages required for documentation
+      - run: |
+          sudo apt-get update && sudo apt-get install -y python3-pip
+          pip3 --version
+          pip3 install mkdocs-material
               
       - name: Generate docs and publish to GitHub Pages
-        run: docker run --rm -t -v ${PWD}:/docs squidfunk/mkdocs-material:latest gh-deploy --force
+        run: mkdocs gh-deploy --force
