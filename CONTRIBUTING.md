@@ -44,4 +44,4 @@ To enable it, execute `localStorage.debug = 'ILC:*'` in the browser console.
 1. First of all: `docker build -t ilc-mkdocs - < ./.mkdocs/Dockerfile`
 1. After that 
     * **To run it in dev mode:** `docker run --rm -it -p 8000:8000 -v ${PWD}:/docs ilc-mkdocs`
-    * **To build it:** `docker run --rm -it -p 8000:8000 -v ${PWD}:/docs ilc-mkdocs build`
+    * **To build it:** `docker run --rm -v ${PWD}:/docs ilc-mkdocs build`
