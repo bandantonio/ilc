@@ -145,7 +145,6 @@ jobs:
           done
 
   build_docs:
-    needs: [push_images]
     name: Build documentation
     runs-on: ubuntu-latest
     steps:
@@ -156,4 +155,4 @@ jobs:
           docker build -t ilc-mkdocs ./.mkdocs/Dockerfile
               
       - name: Generate docs and publish to GitHub Pages
-        run: docker run --rm -v ${PWD}:/docs ilc/mkdocs build
+        run: docker run --rm -v ${PWD}:/docs ilc-mkdocs build
