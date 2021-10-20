@@ -145,12 +145,13 @@ jobs:
           done
 
   build_docs:
+    needs: [push_images]
     name: Build documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install packages required for documentation
+      - name: Install required packages
         run: |
           pip3 install mkdocs-material
           pip3 install mkdocs-macros-plugin
