@@ -152,7 +152,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          docker build -t ilc-mkdocs ./.mkdocs/Dockerfile
+          docker build -t ilc-mkdocs - < ./.mkdocs/Dockerfile
               
       - name: Generate docs and publish to GitHub Pages
         run: docker run --rm -v ${PWD}:/docs ilc-mkdocs build
