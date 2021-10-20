@@ -155,4 +155,4 @@ jobs:
           docker build -t ilc-mkdocs - < ./.mkdocs/Dockerfile
               
       - name: Generate docs and publish to GitHub Pages
-        run: docker run --rm -v ${PWD}:/docs ilc-mkdocs gh-pages --force
+        run: docker run --rm -v ${PWD}:/docs ilc-mkdocs gh-deploy --force
