@@ -21,6 +21,7 @@ repo_name: namecheap/ilc
 nav:
   - Home:
     - Home: index.md
+    - Subtree: docs/subtree.md
     - Contributing: CONTRIBUTING.md
   - Demo website: http://demo.microfrontends.online/
   - Documentation:
