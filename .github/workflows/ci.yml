@@ -1,179 +1,174 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
+on: [push]
 
 jobs:
-  build_ilc:
-    name: Build ILC
-    runs-on: ubuntu-latest
+  # build_ilc:
+  #   name: Build ILC
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v1
+  #   steps:
+  #   - uses: actions/checkout@v1
 
-    - uses: benjlevesque/short-sha@v1.2
-      id: sha7
+  #   - uses: benjlevesque/short-sha@v1.2
+  #     id: sha7
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+  #   - name: Set up QEMU
+  #     uses: docker/setup-qemu-action@v1
 
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
+  #   - name: Set up Docker Buildx
+  #     id: buildx
+  #     uses: docker/setup-buildx-action@v1
 
-    - name: Docker ilc auth
-      run: echo "${{ secrets.DOCKER_HUB_TOKEN_NC }}" | docker login --username namecheaprnd --password-stdin
+  #   - name: Docker ilc auth
+  #     run: echo "${{ secrets.DOCKER_HUB_TOKEN_NC }}" | docker login --username namecheaprnd --password-stdin
 
-    - name: Build the Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: "{{defaultContext}}:ilc"
-        platforms: linux/amd64,linux/arm64
-        push: true
-        cache-from: |
-          type=registry,ref=namecheap/ilc_tmp:buildcache
-        cache-to: |
-          type=registry,ref=namecheap/ilc_tmp:buildcache,mode=max
-        tags: |
-          namecheap/ilc_tmp:${{ env.SHA }}
-          namecheap/ilc_tmp:latest
+  #   - name: Build the Docker image
+  #     uses: docker/build-push-action@v2
+  #     with:
+  #       context: "{{defaultContext}}:ilc"
+  #       platforms: linux/amd64,linux/arm64
+  #       push: true
+  #       cache-from: |
+  #         type=registry,ref=namecheap/ilc_tmp:buildcache
+  #       cache-to: |
+  #         type=registry,ref=namecheap/ilc_tmp:buildcache,mode=max
+  #       tags: |
+  #         namecheap/ilc_tmp:${{ env.SHA }}
+  #         namecheap/ilc_tmp:latest
 
-    - name: Run sever side tests
-      run: docker run namecheap/ilc_tmp:$SHA npm run test:ci
+  #   - name: Run sever side tests
+  #     run: docker run namecheap/ilc_tmp:$SHA npm run test:ci
 
-    - name: Run server side tests coverage
-      run: docker run --volume /artifacts/ilc/.test_output/server:/temporary namecheap/ilc_tmp:$SHA bash -c "npm run test:coverage && mv .nyc_output/* /temporary"
+  #   - name: Run server side tests coverage
+  #     run: docker run --volume /artifacts/ilc/.test_output/server:/temporary namecheap/ilc_tmp:$SHA bash -c "npm run test:coverage && mv .nyc_output/* /temporary"
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: server-side-tests-artifacts
-        path: /artifacts/ilc/.test_output/server/
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: server-side-tests-artifacts
+  #       path: /artifacts/ilc/.test_output/server/
 
-    - name: Build the Docker image to test client side
-      run: |
-        cd ./ilc/
-        DOCKER_BUILDKIT=1 docker build . --file ./Test.Dockerfile --tag ilc:tmp-test-client --build-arg BASE_IMAGE=namecheap/ilc_tmp:$SHA
+  #   - name: Build the Docker image to test client side
+  #     run: |
+  #       cd ./ilc/
+  #       DOCKER_BUILDKIT=1 docker build . --file ./Test.Dockerfile --tag ilc:tmp-test-client --build-arg BASE_IMAGE=namecheap/ilc_tmp:$SHA
 
-    - name: Run client side tests
-      run: |
-        echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
-        sudo sysctl -p
-        docker run --volume /artifacts/ilc/.test_output/client:/temporary ilc:tmp-test-client bash -c "npm run test:client -- --browsers ChromeHeadlessWithoutSecurity && mv .karma_output/* /temporary"
+  #   - name: Run client side tests
+  #     run: |
+  #       echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+  #       sudo sysctl -p
+  #       docker run --volume /artifacts/ilc/.test_output/client:/temporary ilc:tmp-test-client bash -c "npm run test:client -- --browsers ChromeHeadlessWithoutSecurity && mv .karma_output/* /temporary"
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: client-side-tests-artifacts
-        path: /artifacts/ilc/.test_output/client/
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: client-side-tests-artifacts
+  #       path: /artifacts/ilc/.test_output/client/
 
-  build_registry:
-    name: Build Registry
-    runs-on: ubuntu-latest
+  # build_registry:
+  #   name: Build Registry
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v1
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - uses: benjlevesque/short-sha@v1.2
-        id: sha7
+  #     - uses: benjlevesque/short-sha@v1.2
+  #       id: sha7
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v1
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
+  #     - name: Set up Docker Buildx
+  #       id: buildx
+  #       uses: docker/setup-buildx-action@v1
 
-      - name: Docker registry auth
-        run: echo "${{ secrets.DOCKER_HUB_TOKEN_NC }}" | docker login --username namecheaprnd --password-stdin
+  #     - name: Docker registry auth
+  #       run: echo "${{ secrets.DOCKER_HUB_TOKEN_NC }}" | docker login --username namecheaprnd --password-stdin
 
-      - name: Build the Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: "{{defaultContext}}:registry"
-          platforms: linux/amd64,linux/arm64
-          push: true
-          cache-from: |
-            type=registry,ref=namecheap/ilc_tmp:buildcache_registry
-          cache-to: |
-            type=registry,ref=namecheap/ilc_tmp:buildcache_registry,mode=max
-          tags: |
-            namecheap/ilc_tmp:reg_${{ env.SHA }}
-            namecheap/ilc_tmp:reg_latest
+  #     - name: Build the Docker image
+  #       uses: docker/build-push-action@v2
+  #       with:
+  #         context: "{{defaultContext}}:registry"
+  #         platforms: linux/amd64,linux/arm64
+  #         push: true
+  #         cache-from: |
+  #           type=registry,ref=namecheap/ilc_tmp:buildcache_registry
+  #         cache-to: |
+  #           type=registry,ref=namecheap/ilc_tmp:buildcache_registry,mode=max
+  #         tags: |
+  #           namecheap/ilc_tmp:reg_${{ env.SHA }}
+  #           namecheap/ilc_tmp:reg_latest
 
-      - name: Run tests
-        run: docker run namecheap/ilc_tmp:reg_$SHA npm run test:ci
+  #     - name: Run tests
+  #       run: docker run namecheap/ilc_tmp:reg_$SHA npm run test:ci
 
-  e2e_tests:
-    name: Run E2E tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
+  # e2e_tests:
+  #   name: Run E2E tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Use Node.js 16
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
+  #     - name: Use Node.js 16
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 16
 
-      - name: Install Chrome deps
-        run: sudo apt-get update && sudo apt-get install -y libgbm-dev
+  #     - name: Install Chrome deps
+  #       run: sudo apt-get update && sudo apt-get install -y libgbm-dev
 
-      - name: Cache node modules
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-build
+  #     - name: Cache node modules
+  #       uses: actions/cache@v1
+  #       env:
+  #         cache-name: cache-node-modules
+  #       with:
+  #         path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+  #         key: ${{ runner.os }}-build
 
-      - name: Install dependencies
-        run: npm i
+  #     - name: Install dependencies
+  #       run: npm i
 
-      - name: Build ILC & Registry
-        run: npm run build
+  #     - name: Build ILC & Registry
+  #       run: npm run build
 
-      - name: Run E2E tests
-        run: cd e2e && npm run start
+  #     - name: Run E2E tests
+  #       run: cd e2e && npm run start
 
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: e2e-tests-artifacts
-          path: e2e/.codecept_output
+  #     - uses: actions/upload-artifact@v2
+  #       if: failure()
+  #       with:
+  #         name: e2e-tests-artifacts
+  #         path: e2e/.codecept_output
 
-  push_images:
-    needs: [build_ilc, build_registry, e2e_tests]
-    name: Push images to registry
-    runs-on: ubuntu-latest
-    steps:
-      - name: Docker registry auth
-        run: echo "${{ secrets.DOCKER_HUB_TOKEN_NC }}" | docker login --username namecheaprnd --password-stdin
+  # push_images:
+  #   needs: [build_ilc, build_registry, e2e_tests]
+  #   name: Push images to registry
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Docker registry auth
+  #       run: echo "${{ secrets.DOCKER_HUB_TOKEN_NC }}" | docker login --username namecheaprnd --password-stdin
 
-      - name: Calc tags
-        id: tags
-        run: |
-          BRANCH=$(echo ${GITHUB_REF} | cut -d '/' -f 3-99)
-          LATEST=$([ "$BRANCH" == "master" ] && echo "latest,${GITHUB_SHA:0:7}," || echo "")
-          DOCKER_TAGS="$LATEST${BRANCH//\//_}"
-          echo "Tags that will be used: $DOCKER_TAGS"
-          echo ::set-output name=docker_tags::$DOCKER_TAGS
+  #     - name: Calc tags
+  #       id: tags
+  #       run: |
+  #         BRANCH=$(echo ${GITHUB_REF} | cut -d '/' -f 3-99)
+  #         LATEST=$([ "$BRANCH" == "master" ] && echo "latest,${GITHUB_SHA:0:7}," || echo "")
+  #         DOCKER_TAGS="$LATEST${BRANCH//\//_}"
+  #         echo "Tags that will be used: $DOCKER_TAGS"
+  #         echo ::set-output name=docker_tags::$DOCKER_TAGS
 
-      - name: Install regctl
-        run: |
-          curl -L https://github.com/regclient/regclient/releases/download/v0.3.10/regctl-linux-amd64 > ./regctl
-          chmod 755 ./regctl
+  #     - name: Install regctl
+  #       run: |
+  #         curl -L https://github.com/regclient/regclient/releases/download/v0.3.10/regctl-linux-amd64 > ./regctl
+  #         chmod 755 ./regctl
 
-      - name: Push images
-        run: |
-          TAGS="${{ steps.tags.outputs.docker_tags }}"
+  #     - name: Push images
+  #       run: |
+  #         TAGS="${{ steps.tags.outputs.docker_tags }}"
 
-          for i in ${TAGS//,/ }
-          do
-              ./regctl image copy namecheap/ilc_tmp:reg_${GITHUB_SHA:0:7} namecheap/ilc_registry:$i
-              ./regctl image copy namecheap/ilc_tmp:${GITHUB_SHA:0:7} namecheap/ilc:$i
-          done
+  #         for i in ${TAGS//,/ }
+  #         do
+  #             ./regctl image copy namecheap/ilc_tmp:reg_${GITHUB_SHA:0:7} namecheap/ilc_registry:$i
+  #             ./regctl image copy namecheap/ilc_tmp:${GITHUB_SHA:0:7} namecheap/ilc:$i
+  #         done
 
   build_docs:
     name: Build documentation
