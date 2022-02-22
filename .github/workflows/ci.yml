@@ -176,7 +176,6 @@ jobs:
           done
 
   build_docs:
-    needs: [push_images]
     name: Build documentation
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
