@@ -1,0 +1,27 @@
+name: antmarky-generate
+on:
+  push:
+    branches:    
+      - '**'
+  pull_request:
+    types: [opened, edited]
+jobs:
+  build_docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build the Docker image
+        run: |
+          docker build -t ilc-mkdocs - < ./.mkdocs/Dockerfile
+
+      - name: Generate docs and publish them to Netlify
+        run: docker run --rm -v ${PWD}:/docs ilc-mkdocs build
+
+      - name: Deploy to Netlify
+        uses: jsmrcaga/action-netlify-deploy@master
+        with:
+          NETLIFY_AUTH_TOKEN: lAzz9QziMqwZDPfGkpHyr3bXYZsfpVzCzIi_a25FNa4
+          NETLIFY_SITE_ID: 148ec1e7-7f2a-4bb7-b3f0-750969298d49
+          build_directory: public
