@@ -23,7 +23,7 @@ jobs:
         env:
           NETLIFY_SITE_ID: 2417a054-8449-4430-8a80-bd1e080d1ad4
           NETLIFY_AUTH_TOKEN: lAzz9QziMqwZDPfGkpHyr3bXYZsfpVzCzIi_a25FNa4
-        run: netlify deploy --dir=mkdocs_dist --alias="'"${ GITHUB_SHA }"'" --message="Deployed ${ GITHUB_REF }"
+        run: netlify deploy --dir=mkdocs_dist --alias="${ GITHUB_SHA }" --message="Deployed ${ GITHUB_REF }"
 
       - name: Status check
         uses: Sibz/github-status-action@v1.1.1
