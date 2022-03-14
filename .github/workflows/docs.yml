@@ -23,7 +23,7 @@ jobs:
         env:
           NETLIFY_SITE_ID: 148ec1e7-7f2a-4bb7-b3f0-750969298d49
           NETLIFY_AUTH_TOKEN: lAzz9QziMqwZDPfGkpHyr3bXYZsfpVzCzIi_a25FNa4
-        run: netlify deploy --dir=mkdocs_dist
+        run: netlify deploy --dir=/docs/mkdocs_dist
 
       - name: Status check
         uses: Sibz/github-status-action@v1.1.1
