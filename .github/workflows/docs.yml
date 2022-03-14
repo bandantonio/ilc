@@ -1,4 +1,4 @@
-name: antmarky-generate
+name: docs
 on:
   push:
     branches:    
@@ -20,8 +20,15 @@ jobs:
         run: docker run --rm -v ${PWD}:/docs ilc-mkdocs build
 
       - name: Deploy to Netlify
-        uses: jsmrcaga/action-netlify-deploy@master
-        with:
-          NETLIFY_AUTH_TOKEN: lAzz9QziMqwZDPfGkpHyr3bXYZsfpVzCzIi_a25FNa4
+        env:
           NETLIFY_SITE_ID: 148ec1e7-7f2a-4bb7-b3f0-750969298d49
-          build_directory: public
+          NETLIFY_AUTH_TOKEN: lAzz9QziMqwZDPfGkpHyr3bXYZsfpVzCzIi_a25FNa4
+        run: netlify deploy --dir=mkdocs_dist
+
+      - name: Status check
+        uses: Sibz/github-status-action@v1.1.1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: Netlify preview
+          state: success
+          target_url: https://${{ env.BRANCH_NAME }}--ilc-preview.netlify.app
