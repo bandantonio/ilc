@@ -31,4 +31,4 @@ jobs:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: Netlify preview
           state: success
-          target_url: https://$GITHUB_SHA--ilc-preview.netlify.app
+          target_url: https://${{ GITHUB_SHA }}--ilc-preview.netlify.app
