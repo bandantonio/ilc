@@ -1,0 +1,34 @@
+name: docs
+on:
+  push:
+    branches:    
+      - '**'
+  pull_request:
+    types: [opened, edited]
+jobs:
+  build_docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build the Docker image
+        run: |
+          docker build -t ilc-mkdocs - < ./.mkdocs/Dockerfile
+
+      - name: Generate docs and publish them to Netlify
+        run: docker run --rm -v ${PWD}:/docs ilc-mkdocs build
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_SITE_ID: 2417a054-8449-4430-8a80-bd1e080d1ad4
+          NETLIFY_AUTH_TOKEN: lAzz9QziMqwZDPfGkpHyr3bXYZsfpVzCzIi_a25FNa4
+        run: netlify deploy --dir=mkdocs_dist --alias=$GITHUB_SHA --message="Deployed $GITHUB_REF"
+
+      - name: Status check
+        uses: Sibz/github-status-action@v1.1.1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: Netlify preview
+          state: success
+          target_url: https://${{ github.sha }}--ilc-preview.netlify.app
